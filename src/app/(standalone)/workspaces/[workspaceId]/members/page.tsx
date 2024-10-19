@@ -1,15 +1,15 @@
 import { getCurrent } from "@/features/auth/queries";
-import { CreateWorkspacesForm } from "@/features/workspaces/components/create-workspaces-form";
+import { MembersList } from "@/features/workspaces/components/members.list";
 import { redirect } from "next/navigation";
 
-const WorkSpacesCreatePage = async () => {
+const WorkSpaceIdMembersPage = async () => {
   const user = await getCurrent();
   if (!user) redirect("/sign-in");
   return (
     <div className="w-full lg:max-w-xl">
-      <CreateWorkspacesForm />
+      <MembersList />
     </div>
   );
 };
 
-export default WorkSpacesCreatePage;
+export default WorkSpaceIdMembersPage;

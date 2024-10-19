@@ -4,19 +4,11 @@ import { AUTH_COOKIE } from "../auth/constants";
 import { DATABASE_ID, MEMBERS_ID, WORKSPACES_ID } from "@/config";
 import { getMember } from "../members/utils";
 import { Workspace } from "./types";
+import { createSessionClient } from "@/lib/appwrite";
 
 export const getWorkspaces = async () => {
   try {
-    const client = new Client()
-      .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
-      .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT!);
-
-    const session = await cookies().get(AUTH_COOKIE);
-    if (!session) return { document: [], total: 0 };
-    client.setSession(session.value);
-
-    const databases = new Databases(client);
-    const account = new Account(client);
+    const { account, databases } = await createSessionClient();
     const user = await account.get();
     const members = await databases.listDocuments(DATABASE_ID, MEMBERS_ID, [
       Query.equal("userId", user.$id),
@@ -57,9 +49,9 @@ export const getWorkspace = async ({ workspaceId }: GetWorkspaceProps) => {
     const account = new Account(client);
     const user = await account.get();
     const member = await getMember({
-      userId: user.$id,
-      workspaceId: workspaceId,
       databases,
+      userId: user.$id,
+      workspaceId,
     });
     if (!member) {
       return null;
@@ -71,6 +63,28 @@ export const getWorkspace = async ({ workspaceId }: GetWorkspaceProps) => {
     );
 
     return workspace;
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+};
+
+interface GetWorkspaceInfoProps {
+  workspaceId: string;
+}
+
+export const getWorkspaceInfo = async ({
+  workspaceId,
+}: GetWorkspaceInfoProps) => {
+  try {
+    const { databases } = await createSessionClient();
+    const workspace = await databases.getDocument<Workspace>(
+      DATABASE_ID,
+      WORKSPACES_ID,
+      workspaceId
+    );
+
+    return { name: workspace.name };
   } catch (e) {
     console.log(e);
     return null;
