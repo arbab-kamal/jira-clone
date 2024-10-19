@@ -23,24 +23,25 @@ export const Projects = () => {
           className="size-5 text-neutral-500 cursor-pointer hover:opacity-75 transition"
         />
       </div>
-      {data?.documents.map((project) => {
-        const href = `/workspaces/${workspaceId}/projects/${project.$id}`;
-        const isActive = pathname === href;
+      {data &&
+        data?.documents?.map((project) => {
+          const href = `/workspaces/${workspaceId}/projects/${project.$id}`;
+          const isActive = pathname === href;
 
-        return (
-          <Link
-            key={project.$id}
-            href={href}
-            className={cn(
-              "flex items-center gap-2.5 p-2.5 rounded-md hover:opacity-75 transition cursor-pointer text-neutral-500",
-              isActive && "bg-white shadow-sm text-primary hover:opacity-100"
-            )}
-          >
-            <ProjectAvatar name={project.name} image={project.imageUrl} />
-            <span className="truncate">{project.name}</span>
-          </Link>
-        );
-      })}
+          return (
+            <Link
+              key={project.$id}
+              href={href}
+              className={cn(
+                "flex items-center gap-2.5 p-2.5 rounded-md hover:opacity-75 transition cursor-pointer text-neutral-500",
+                isActive && "bg-white shadow-sm text-primary hover:opacity-100"
+              )}
+            >
+              <ProjectAvatar name={project.name} image={project.imageUrl} />
+              <span className="truncate">{project.name}</span>
+            </Link>
+          );
+        })}
     </div>
   );
 };
