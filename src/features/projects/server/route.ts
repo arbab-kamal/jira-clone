@@ -65,7 +65,9 @@ const app = new Hono()
       const databases = c.get("databases");
       const { workspaceId } = c.req.valid("query");
 
-      if (!workspaceId) return c.json({ error: "Unauthorized" }, 400);
+      if (!workspaceId) {
+        return c.json({ error: "Missing workspaceId" }, 400);
+      }
       const member = await getMember({
         databases,
         workspaceId,
